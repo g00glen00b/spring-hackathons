@@ -1,0 +1,12 @@
+# let's get a ☕ before our 🤝🗓️
+GET http://localhost:8080/api/emoji/translation?text=let's get a coffee before our meeting
+
+###
+
+# let's order a 🚕 with our 💳
+GET http://localhost:8080/api/emoji/translation?text=let's order a taxi with our credit card
+
+###
+
+# you need to wear 🕶️ because the ☀️ is shining
+GET http://localhost:8080/api/emoji/translation?text=you need to wear sunglasses because the sun is shining
