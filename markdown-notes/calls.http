@@ -1,0 +1,21 @@
+GET http://localhost:8080/api/note
+
+###
+
+POST http://localhost:8080/api/note
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="test.md"
+
+This is a **Markdown document**.
+
+The Markdown document contains *an grammatical error* for **demo purposes**.
+
+###
+
+GET http://localhost:8080/api/note/3702ea5d-435e-4720-b9b3-fca32e8e0d82/render
+
+###
+
+GET http://localhost:8080/api/note/3702ea5d-435e-4720-b9b3-fca32e8e0d82/grammar-error

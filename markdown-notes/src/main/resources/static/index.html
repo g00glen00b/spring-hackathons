@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Markdown notes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous" />
+</head>
+<body>
+<div class="container mt-2">
+    <h1>Notes</h1>
+    <div class="list-group mb-2" id="notes">
+        <!-- Notes will be dynamically loaded here -->
+    </div>
+    <form id="upload">
+        <div class="mb-3">
+            <label for="file" class="form-label">New note</label>
+            <input class="form-control" type="file" id="file" />
+        </div>
+        <button type="submit" class="btn btn-outline-primary">Upload</button>
+    </form>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    async function loadNotes() {
+        const response = await fetch('./api/note');
+        const notes = await response.json();
+        notes.forEach(note => appendNote(note));
+    }
+
+    function appendNote(note) {
+        const noteElement = document.createElement('a');
+        noteElement.href = `./detail.html?id=${note.id}`;
+        noteElement.className = 'list-group-item list-group-item-action';
+        noteElement.textContent = note.filename;
+        document.getElementById('notes').appendChild(noteElement);
+    }
+
+    async function onUpload(event) {
+        event.preventDefault();
+        const input = document.getElementById('file');
+        const file = input.files[0];
+        if (!file) return;
+        const formData = new FormData();
+        formData.append('file', file);
+        const response = await fetch('./api/note', {
+            method: 'POST',
+            body: formData
+        });
+        appendNote(await response.json());
+
+    }
+
+    loadNotes();
+    document.getElementById('upload').addEventListener('submit', onUpload);
+</script>
+</body>
+</html>
