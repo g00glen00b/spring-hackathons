@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments/head :: head}"></head>
+<body>
+<div class="container">
+  <div class="row justify-content-md-center">
+    <div class="card col-lg-6 mt-4">
+      <div class="card-body">
+        <h5 class="card-title" th:text="${title}"></h5>
+        <form th:action="${location}" th:object="${article}" method="post">
+          <div class="form-group mb-3">
+            <label for="title">Article Title</label>
+            <input
+              type="text"
+              class="form-control"
+              name="title"
+              th:field="*{title}"
+              id="title" />
+          </div>
+          <div class="form-group mb-3">
+            <label for="publishedAt">Publishing Date</label>
+            <input
+              type="date"
+              class="form-control"
+              name="publishedAt"
+              th:value="${#temporals.format(article.publishedAt, 'yyyy-MM-dd')}"
+              id="publishedAt" />
+          </div>
+          <div class="form-group mb-3">
+            <label for="content">Content</label>
+            <textarea
+              class="form-control"
+              rows="20"
+              name="content"
+              th:field="*{content}"
+              id="content">
+            </textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" th:text="${action}"></button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

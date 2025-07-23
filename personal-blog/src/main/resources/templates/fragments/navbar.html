@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<nav
+  th:fragment="navbar"
+  class="navbar navbar-expand bg-body-tertiary mb-3">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/home">
+      Personal blog
+    </a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a
+            th:class="'nav-link ' + ${isAdmin ? '' : 'active'}"
+            href="/home">
+            Home
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            th:class="'nav-link ' + ${isAdmin ? 'active' : ''}"
+            href="/admin">
+            Admin
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+</html>

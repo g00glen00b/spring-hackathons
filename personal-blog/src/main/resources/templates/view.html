@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments/head :: head}"></head>
+<body>
+<nav th:replace="~{fragments/navbar.html :: navbar}"></nav>
+<div class="container">
+  <h1 th:text="${article.title}">Title</h1>
+  <small
+    class="h6"
+    th:text="${#temporals.format(article.publishedAt, 'MMMM d, yyyy')}">
+    Published at
+  </small>
+  <hr />
+  <div th:utext="${article.renderedContent}"></div>
+</div>
+</body>
+</html>
