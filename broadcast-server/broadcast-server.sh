@@ -1,0 +1,1 @@
+java -jar target/broadcast-server-0.0.1-SNAPSHOT.jar "$@"
