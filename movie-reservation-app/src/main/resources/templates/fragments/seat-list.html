@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<ul class="list-group" th:fragment="seat-list">
+  <li
+    class="list-group-item d-flex align-items-center"
+    th:each="seat : ${seats}">
+    <input
+      class="form-check-input me-2 mt-0"
+      type="checkbox"
+      name="seatId"
+      th:value="${seat.id}"
+      th:disabled="${seat.reserved}"
+      th:id="${seat.id}" />
+    <label
+      class="form-check-label me-auto"
+      th:for="${seat.id}"
+      th:text="${seat.number}">
+      Number
+    </label>
+    <span
+      th:if="${seat.reserved}"
+      class="badge text-bg-danger rounded-pill">
+      Reserved
+    </span>
+    <span
+      th:if="${!seat.reserved}" th:text="'&euro;' + ${seat.price}">
+      &euro;0
+    </span>
+  </li>
+</ul>

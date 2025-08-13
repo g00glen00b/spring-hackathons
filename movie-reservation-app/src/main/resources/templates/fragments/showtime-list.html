@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<div
+  class="list-group"
+  th:fragment="showtime-list">
+  <a
+    class="list-group-item list-group-item-action"
+    th:href="'/reservation/draft/' + ${showtime.id}"
+    th:each="showtime : ${showtimes}">
+    <div class="d-flex w-100 justify-content-between">
+      <h5 class="mb-1" th:text="${#temporals.format(showtime.startingAt, 'HH:mm')}">00:00</h5>
+      <small th:text="'&euro;' + ${showtime.price}">&euro;10</small>
+    </div>
+    <p
+      class="mb-1"
+      th:hx-get="'/theatre/' + ${showtime.theatreId}"
+      hx-swap="outerHTML"
+      hx-trigger="load">
+      ACME Corp
+    </p>
+  </a>
+</div>
+</body>
+</html>

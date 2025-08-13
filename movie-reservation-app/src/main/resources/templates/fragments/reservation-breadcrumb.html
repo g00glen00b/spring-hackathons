@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<nav aria-label="breadcrumb" th:fragment="reservation-breadcrumb">
+  <ol class="breadcrumb">
+    <li
+      th:if="${state.movie == null}"
+      class="breadcrumb-item active"
+      aria-current="page">
+      Movies
+    </li>
+    <li
+      th:if="${state.movie != null}"
+      class="breadcrumb-item">
+      <a href="/movie">Movies</a>
+    </li>
+    <li
+      th:if="${state.movie != null && state.date == null}"
+      class="breadcrumb-item active"
+      th:text="${state.movie.title}"
+      aria-current="page">
+    </li>
+    <li
+      th:if="${state.date != null}"
+      class="breadcrumb-item">
+      <a th:href="'/movie/' + ${state.movie.id}" th:text="${state.movie.title}"></a>
+    </li>
+    <li
+      th:if="${state.date != null && state.time == null}"
+      class="breadcrumb-item active"
+      th:text="${#temporals.format(state.date, 'MMMM d, yyyy')}"
+      aria-current="page">
+    </li>
+    <li
+      th:if="${state.time != null}"
+      class="breadcrumb-item"
+      aria-current="page">
+      <a
+        th:href="'/movie/' + ${state.movie.id} + '/showtime/' + ${state.date}"
+        th:text="${#temporals.format(state.date, 'MMMM d, yyyy')}">
+      </a>
+    </li>
+    <li
+      th:if="${state.time != null}"
+      class="breadcrumb-item active"
+      th:text="${#temporals.format(state.time, 'HH:mm')}"
+      aria-current="page">
+    </li>
+  </ol>
+</nav>
+</body>
+</html>

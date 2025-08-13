@@ -1,0 +1,1 @@
+delete from showtime where ending_at < starting_at;

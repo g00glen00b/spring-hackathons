@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments/head :: head}"></head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar(active='movie')}"></nav>
+<div class="container">
+  <nav
+    th:hx-get="'/reservation/navigation?movieId=' + ${movieId}"
+    hx-swap="outerHTML"
+    hx-trigger="load">
+  </nav>
+  <div
+    class="alert alert-success"
+    th:if="${success}">
+    Successfully registered movie
+  </div>
+  <div
+    class="alert alert-success"
+    th:if="${deleted}">
+    Successfully deleted showtime
+  </div>
+  <div
+    th:hx-get="'/movie/' + ${movieId} + '/card'"
+    hx-swap="outerHTML"
+    hx-trigger="load">
+  </div>
+  <div class="card" sec:authorize="hasAuthority('ADMIN')">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-6 text-center">
+          <p class="h1" th:text="${statistics.ticketsSold}">0</p>
+          <p class="text-body-secondary">tickets sold</p>
+        </div>
+        <div class="col-6 text-center">
+          <p class="h1" th:text="'&euro;' + ${statistics.totalRevenue}">&euro;0</p>
+          <p class="text-body-secondary">total revenue</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <h1>Showdates</h1>
+  <div sec:authorize="hasAuthority('ADMIN')">
+    <a
+      th:href="'/movie/' + ${movieId} + '/showtime/add'"
+      class="btn btn-outline-primary mb-3">
+      Add showtime
+    </a>
+  </div>
+  <div th:replace="~{fragments/showtime-date-list :: showtime-date-list}"></div>
+  <div sec:authorize="hasAuthority('ADMIN')">
+    <h1>Danger zone</h1>
+    <form method="post" th:action="@{/movie/{id}/delete(id=${movieId})}">
+      <button
+        type="submit"
+        class="btn btn-outline-danger mb-3">
+        Delete movie
+      </button>
+    </form>
+  </div>
+</div>
+<div th:replace="~{fragments/foot :: foot}"></div>
+</body>
+</html>

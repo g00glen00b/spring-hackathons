@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<div class="card h-100" th:fragment="movie-vertical-card">
+  <img
+    th:src="'/movie/' + ${movie.id} + '/poster'"
+    class="card-img-top"
+    alt="Poster" />
+  <div class="card-body">
+    <h5 class="card-title" th:text="${movie.title}">Title</h5>
+    <h6 class="card-subtitle mb-2 text-body-secondary">
+      <span th:each="genre, status : ${movie.genres}">
+        <span th:text="${genre}">Genre</span>
+        <span th:if="${!status.last}">/</span>
+      </span>
+    </h6>
+    <p class="card-text" th:text="${movie.description}">
+      Description
+    </p>
+    <a th:href="'/movie/' + ${movie.id}" class="btn btn-primary">View Info</a>
+  </div>
+</div>
+</body>
+</html>

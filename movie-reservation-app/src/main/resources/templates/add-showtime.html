@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments/head :: head}"></head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar(active='movie')}"></nav>
+<div class="container">
+  <nav
+    th:hx-get="'/reservation/navigation?movieId=' + ${movieId}"
+    hx-swap="outerHTML"
+    hx-trigger="load">
+  </nav>
+  <div
+    class="alert alert-danger"
+    th:if="${error != null}"
+    th:text="${error}">
+    Error
+  </div>
+  <form
+    method="post"
+    th:action="@{/movie/{movieId}/showtime(movieId=${movieId})}">
+    <div class="mb-3">
+      <label for="date" class="form-label">Date</label>
+      <input
+        type="datetime-local"
+        class="form-control"
+        id="date"
+        th:value="${date}"
+        name="date" />
+    </div>
+    <div class="mb-3">
+      <label for="price" class="form-label">Price</label>
+      <div class="input-group mb-3">
+        <span class="input-group-text">&euro;</span>
+        <input
+          type="number"
+          class="form-control"
+          id="price"
+          th:value="${price}"
+          name="price" />
+      </div>
+    </div>
+    <div
+      hx-get="/theatre/checklist"
+      hx-swap="outerHTML"
+      hx-trigger="load">
+    </div>
+    <button
+      type="submit"
+      class="btn btn-primary mt-3">
+      Add showtime
+    </button>
+  </form>
+</div>
+<div th:replace="~{fragments/foot :: foot}"></div>
+</body>
+</html>

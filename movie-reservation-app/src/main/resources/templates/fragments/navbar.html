@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<nav
+  th:fragment="navbar"
+  class="navbar navbar-expand bg-body-tertiary mb-3">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/movie">
+      Movie Reservation
+    </a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a
+            th:class="${#strings.equals(active, 'movie')} ? 'nav-link active' : 'nav-link'"
+            href="/movie">
+            Movies
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            th:class="${#strings.equals(active, 'reservation')} ? 'nav-link active' : 'nav-link'"
+            href="/reservation">
+            Reservations
+          </a>
+        </li>
+      </ul>
+      <form method="post" th:action="@{/logout}">
+        <button
+          type="submit"
+          class="nav-link">
+          Log out
+        </button>
+      </form>
+    </div>
+  </div>
+</nav>
+</html>

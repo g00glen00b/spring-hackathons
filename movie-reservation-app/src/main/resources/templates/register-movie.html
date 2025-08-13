@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments/head :: head}"></head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar(active='movie')}"></nav>
+<div class="container">
+  <nav
+    hx-get="/reservation/navigation"
+    hx-swap="outerHTML"
+    hx-trigger="load">
+  </nav>
+  <form method="post" th:action="@{/movie/register}" enctype="multipart/form-data">
+    <div class="mb-3">
+      <label for="title" class="form-label">Title</label>
+      <input
+        type="text"
+        class="form-control"
+        id="title"
+        name="title" />
+    </div>
+    <div class="mb-3">
+      <label for="description" class="form-label">Description</label>
+      <textarea
+        class="form-control"
+        id="description"
+        name="description"
+        rows="3">
+      </textarea>
+    </div>
+    <div class="mb-3">
+      <label for="duration" class="form-label">Duration</label>
+      <input
+        type="text"
+        class="form-control"
+        id="duration"
+        name="duration"
+        aria-describedby="durationHelp" />
+      <div id="durationHelp" class="form-text">
+        Duration should be an ISO duration, eg. PT2H32M denotes a movie of 2 hours and 32 minutes.
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="poster" class="form-label">Poster</label>
+      <input
+        type="file"
+        class="form-control"
+        id="poster"
+        name="poster"
+        aria-describedby="posterHelp" />
+      <div id="posterHelp" class="form-text">
+        Poster should be a PNG-file.
+      </div>
+    </div>
+    <div class="form-check" th:each="genre : ${genres}">
+      <input
+        class="form-check-input"
+        type="checkbox"
+        name="genreId"
+        th:value="${genre.id}"
+        th:id="${genre.id}" />
+      <label
+        class="form-check-label"
+        th:for="${genre.id}"
+        th:text="${genre.name}">
+        Genre
+      </label>
+    </div>
+    <button
+      type="submit"
+      class="btn btn-primary mt-3">
+      Register
+    </button>
+  </form>
+</div>
+<div th:replace="~{fragments/foot :: foot}"></div>
+</body>
+</html>

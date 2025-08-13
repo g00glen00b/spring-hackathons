@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments/head :: head}"></head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar(active='movie')}"></nav>
+<div class="container">
+  <nav
+    th:hx-get="'/reservation/navigation?showtimeId=' + ${showtimeId}"
+    hx-swap="outerHTML"
+    hx-trigger="load">
+  </nav>
+  <div
+    th:hx-get="'/movie/showtime/' + ${showtimeId} + '/card'"
+    hx-swap="outerHTML"
+    hx-trigger="load">
+  </div>
+  <div sec:authorize="hasAuthority('ADMIN')">
+    <form method="post" th:action="@{/movie/showtime/{id}/delete(id=${showtimeId})}">
+      <button
+        type="submit"
+        class="btn btn-outline-danger mb-3">
+        Delete showtime
+      </button>
+    </form>
+  </div>
+  <form method="post" th:action="@{/reservation/draft/{showtimeId}(showtimeId=${showtimeId})}">
+    <div th:replace="~{fragments/seat-list :: seat-list}"></div>
+    <button type="submit" class="btn btn-primary mt-2">Order</button>
+  </form>
+</div>
+<div th:replace="~{fragments/foot :: foot}"></div>
+</body>
+</html>

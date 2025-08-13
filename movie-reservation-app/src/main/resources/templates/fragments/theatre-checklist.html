@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<div
+  th:fragment="theatre-checklist"
+  class="form-check"
+  th:each="theatre : ${theatres}">
+  <input
+    class="form-check-input"
+    type="radio"
+    name="theatreId"
+    th:value="${theatre.id}"
+    th:id="${theatre.id}" />
+  <label
+    class="form-check-label"
+    th:for="${theatre.id}"
+    th:text="${theatre.name}">
+    Theatre
+  </label>
+</div>
+</body>
+</html>

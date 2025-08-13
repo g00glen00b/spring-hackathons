@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<div class="card mb-3" th:fragment="reservation-card">
+  <div class="row g-0">
+    <div class="col-lg-2 col-sm-4">
+      <img th:src="'/movie/' + ${reservation.movie.id} + '/poster'" class="img-fluid rounded-start" alt="Poster" />
+    </div>
+    <div class="col-lg-10 col-sm-8">
+      <div class="card-body">
+        <h5 class="card-title" th:text="${reservation.movie.title}">Title</h5>
+        <h6
+          class="card-subtitle mb-2 text-body-secondary"
+          th:text="${#temporals.format(reservation.showtime.startingAt, 'MMMM d, yyyy HH:mm')}">
+          January 1, 1970 00:00
+        </h6>
+        <p class="card-text">
+          <span th:each="seat, status : ${reservation.reservedSeats}">
+            <span th:text="${seat.number}">Number</span>
+            <span th:if="${!status.last}">/</span>
+          </span>
+        </p>
+        <p
+          class="card-text text-body-secondary"
+          th:text="'&euro;' + ${reservation.totalPrice}">
+          &euro;0
+        </p>
+        <form method="post" th:action="@{/reservation/{id}/cancel(id=${reservation.id})}">
+          <button type="submit" class="btn btn-outline-danger">Cancel reservation</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
