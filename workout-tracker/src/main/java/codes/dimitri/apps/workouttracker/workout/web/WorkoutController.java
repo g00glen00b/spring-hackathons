@@ -68,12 +68,12 @@ public class WorkoutController {
     @GetMapping
     public Page<WorkoutDTO> listWorkouts(
         @AuthenticationPrincipal DecodedJWT jwt,
-        @RequestParam(required = false) LocalDate date,
-        @RequestParam(required = false) ZoneId zoneId,
+        @RequestParam(required = false) String date,
+        @RequestParam(required = false) String zoneId,
         @ParameterObject Pageable pageable) {
         var userId = UUID.fromString(jwt.getSubject());
         return listWorkouts
-            .execute(new ListWorkouts.Parameters(date, zoneId, userId, pageable))
+            .execute(new ListWorkouts.Parameters(LocalDate.parse(date), ZoneId.of(zoneId), userId, pageable))
             .map(WorkoutDTO::of);
     }
 

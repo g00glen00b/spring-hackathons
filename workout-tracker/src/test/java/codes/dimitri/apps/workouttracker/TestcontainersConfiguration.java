@@ -12,7 +12,7 @@ public class TestcontainersConfiguration {
     @Bean
     @ServiceConnection
     PostgreSQLContainer<?> postgresContainer() {
-        return new PostgreSQLContainer<>(DockerImageName.parse("postgres:17.6"));
+        return new PostgreSQLContainer<>(DockerImageName.parse("postgres:17.6")).withReuse(true);
     }
 
 }

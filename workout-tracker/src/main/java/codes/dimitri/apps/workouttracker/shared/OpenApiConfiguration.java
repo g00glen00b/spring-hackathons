@@ -14,7 +14,7 @@ import java.time.ZoneId;
 @Configuration
 class OpenApiConfiguration {
     @Bean
-    public OpenAPI openAPI() {
+    OpenAPI openAPI() {
         return new OpenAPI()
             .info(new Info()
                 .title("Workout Tracker"))
