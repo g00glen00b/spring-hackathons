@@ -1,7 +1,10 @@
 package codes.dimitri.apps.workouttracker.exercise.web;
 
 import codes.dimitri.apps.workouttracker.exercise.usecase.ListAllExercises;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +18,8 @@ public class ExerciseController {
     private final ListAllExercises listAllExercises;
 
     @GetMapping
-    public Page<ExerciseDTO> getAll(Pageable pageable) {
+    @Operation(security = @SecurityRequirement(name = "jwtAuth"))
+    public Page<ExerciseDTO> getAll(@ParameterObject Pageable pageable) {
         return listAllExercises
             .execute(new ListAllExercises.Parameters(pageable))
             .map(ExerciseDTO::of);

@@ -21,6 +21,7 @@ public class JwtUtils {
             .withSubject(user.getId().toString())
             .withExpiresAt(Instant.now().plus(properties.expiration()))
             .withClaim("username", user.getUsername())
+            .withIssuedAt(Instant.now())
             .sign(algorithm);
     }
 }

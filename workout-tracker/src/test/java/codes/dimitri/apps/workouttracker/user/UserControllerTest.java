@@ -51,7 +51,7 @@ class UserControllerTest {
     @Test
     void getToken_returnsJwt() throws Exception {
         var response = mockMvc
-            .perform(post("/user/token")
+            .perform(get("/user/token")
                 .with(httpBasic("user1", "password1")))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.token").isString())
@@ -69,7 +69,7 @@ class UserControllerTest {
     @Test
     void getToken_failsIfWrongPassword() throws Exception {
         mockMvc
-            .perform(post("/user/token")
+            .perform(get("/user/token")
                 .with(httpBasic("user1", "wrongpassword")))
             .andExpect(status().isUnauthorized())
             .andExpect(jsonPath("$.token").doesNotExist());

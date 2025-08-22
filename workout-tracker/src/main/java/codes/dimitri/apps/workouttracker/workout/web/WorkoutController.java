@@ -8,6 +8,7 @@ import codes.dimitri.apps.workouttracker.workout.usecase.ListWorkouts;
 import codes.dimitri.apps.workouttracker.workout.usecase.UpdateWorkout;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -69,7 +70,7 @@ public class WorkoutController {
         @AuthenticationPrincipal DecodedJWT jwt,
         @RequestParam(required = false) LocalDate date,
         @RequestParam(required = false) ZoneId zoneId,
-        Pageable pageable) {
+        @ParameterObject Pageable pageable) {
         var userId = UUID.fromString(jwt.getSubject());
         return listWorkouts
             .execute(new ListWorkouts.Parameters(date, zoneId, userId, pageable))

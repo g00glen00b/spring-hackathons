@@ -43,6 +43,9 @@ class SecurityConfiguration {
         return http
             .authorizeHttpRequests(requests -> requests
                 .requestMatchers(HttpMethod.POST, "/user").anonymous()
+                .requestMatchers("/swagger-ui.html").permitAll()
+                .requestMatchers("/swagger-ui/**").permitAll()
+                .requestMatchers("/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated())
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session
