@@ -1,6 +1,8 @@
 package codes.dimitri.apps.workouttracker.user;
 
 import codes.dimitri.apps.workouttracker.TestcontainersConfiguration;
+import codes.dimitri.apps.workouttracker.security.JwtUtils;
+import codes.dimitri.apps.workouttracker.user.web.TokenDTO;
 import com.auth0.jwt.JWTVerifier;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -22,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@Import(TestcontainersConfiguration.class)
+@Import({TestcontainersConfiguration.class, TestUsers.class})
 @AutoConfigureMockMvc
 @Sql(scripts = "classpath:test-data/users.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(scripts = "classpath:test-data/cleanup-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
@@ -33,6 +35,10 @@ class UserControllerTest {
     private JWTVerifier jwtVerifier;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private JwtUtils jwtUtils;
+    @Autowired
+    private TestUsers testUsers;
 
     @Test
     void getToken_returnsJwt() throws Exception {
@@ -62,16 +68,10 @@ class UserControllerTest {
 
     @Test
     void getUserInfo_returnsInfo() throws Exception {
-        var response = mockMvc
-            .perform(post("/user/token")
-                .with(httpBasic("user1", "password1")))
-            .andReturn()
-            .getResponse()
-            .getContentAsString();
-        var token = objectMapper.readValue(response, TokenDTO.class);
+        User user1 = testUsers.user1();
         mockMvc
             .perform(get("/user/info")
-                .header("Authorization", "Bearer " + token.token()))
+                .header("Authorization", "Bearer " + jwtUtils.token(user1)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.sub").value("user1"))
             .andExpect(jsonPath("$.iss").value("workout-tracker"));

@@ -1,4 +1,4 @@
-package codes.dimitri.apps.workouttracker.user;
+package codes.dimitri.apps.workouttracker.user.web;
 
 import codes.dimitri.apps.workouttracker.security.JwtUser;
 import com.auth0.jwt.interfaces.DecodedJWT;

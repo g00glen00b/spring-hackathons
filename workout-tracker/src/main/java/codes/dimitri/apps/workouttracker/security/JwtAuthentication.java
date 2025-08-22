@@ -15,4 +15,8 @@ public class JwtAuthentication extends PreAuthenticatedAuthenticationToken {
         super(jwt, jwt, List.of());
         super.setDetails(details);
     }
+
+    public JwtAuthentication(DecodedJWT jwt) {
+        this(jwt, null);
+    }
 }
