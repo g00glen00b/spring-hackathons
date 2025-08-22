@@ -11,9 +11,9 @@ public interface WorkoutScheduleRepository extends JpaRepository<WorkoutSchedule
     Optional<WorkoutSchedule> findByIdAndUserId(UUID id, UUID userId);
     int countAllByWorkoutIdAndActualEndIsNotNull(UUID workoutId);
     @Query(value = "select sum(extract(epoch from s.actual_end - s.actual_start)) from workout_schedule s where s.workout_id = ?1 and s.actual_end is not null", nativeQuery = true)
-    long totalActualDurationByWorkoutId(UUID workoutId);
+    Long totalActualDurationByWorkoutId(UUID workoutId);
     @Query(value = "select min(extract(epoch from s.actual_end - s.actual_start)) from workout_schedule s where s.workout_id = ?1 and s.actual_end is not null", nativeQuery = true)
-    long minActualDurationByWorkoutId(UUID workoutId);
+    Long minActualDurationByWorkoutId(UUID workoutId);
     @Query(value = "select max(extract(epoch from s.actual_end - s.actual_start)) from workout_schedule s where s.workout_id = ?1 and s.actual_end is not null", nativeQuery = true)
-    long maxActualDurationByWorkoutId(UUID workoutId);
+    Long maxActualDurationByWorkoutId(UUID workoutId);
 }

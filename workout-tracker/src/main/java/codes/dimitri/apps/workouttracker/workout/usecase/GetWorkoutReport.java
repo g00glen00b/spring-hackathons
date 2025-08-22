@@ -24,13 +24,17 @@ public class GetWorkoutReport {
             throw new IllegalArgumentException("Workout not found");
         }
         int totalTimesCompleted = scheduleRepository.countAllByWorkoutIdAndActualEndIsNotNull(workoutId);
-        Duration totalTimeSpent = Duration.ofSeconds(scheduleRepository.totalActualDurationByWorkoutId(workoutId));
+        Duration totalTimeSpent = fromSeconds(scheduleRepository.totalActualDurationByWorkoutId(workoutId));
         return new WorkoutReport(
             totalTimesCompleted,
             totalTimeSpent.dividedBy(totalTimesCompleted),
-            Duration.ofSeconds(scheduleRepository.minActualDurationByWorkoutId(workoutId)),
-            Duration.ofSeconds(scheduleRepository.maxActualDurationByWorkoutId(workoutId)),
+            fromSeconds(scheduleRepository.minActualDurationByWorkoutId(workoutId)),
+            fromSeconds(scheduleRepository.maxActualDurationByWorkoutId(workoutId)),
             totalTimeSpent
         );
+    }
+
+    private static Duration fromSeconds(Long seconds) {
+        return seconds == null ? Duration.ZERO : Duration.ofSeconds(seconds);
     }
 }
