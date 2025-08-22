@@ -73,7 +73,11 @@ public class WorkoutController {
         @ParameterObject Pageable pageable) {
         var userId = UUID.fromString(jwt.getSubject());
         return listWorkouts
-            .execute(new ListWorkouts.Parameters(LocalDate.parse(date), ZoneId.of(zoneId), userId, pageable))
+            .execute(new ListWorkouts.Parameters(
+                date == null ? null : LocalDate.parse(date),
+                zoneId == null ? null : ZoneId.of(zoneId),
+                userId,
+                pageable))
             .map(WorkoutDTO::of);
     }
 
