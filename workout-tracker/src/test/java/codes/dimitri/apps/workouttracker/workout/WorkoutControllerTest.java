@@ -4,12 +4,13 @@ import codes.dimitri.apps.workouttracker.TestcontainersConfiguration;
 import codes.dimitri.apps.workouttracker.security.JwtUtils;
 import codes.dimitri.apps.workouttracker.user.TestUsers;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
@@ -18,17 +19,27 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(properties = {
+    "jwt.secret=my-secret",
+    "spring.jpa.show-sql=true"
+})
 @Import({TestcontainersConfiguration.class, TestUsers.class})
 @AutoConfigureMockMvc
-@Sql(scripts = "classpath:test-data/users.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@Sql(scripts = "classpath:test-data/workouts.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@Sql(scripts = "classpath:test-data/cleanup-workouts.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-@Sql(scripts = "classpath:test-data/cleanup-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+@Sql(
+    scripts = {"classpath:test-data/users.sql", "classpath:test-data/workouts.sql", "classpath:test-data/schedules.sql"},
+    executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+)
+@Sql(
+    scripts = {"classpath:test-data/cleanup-schedules.sql", "classpath:test-data/cleanup-workouts.sql", "classpath:test-data/cleanup-users.sql"},
+    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+)
 class WorkoutControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -38,7 +49,7 @@ class WorkoutControllerTest {
     private TestUsers testUsers;
     @Autowired
     private WorkoutRepository repository;
-    
+
     @Test
     void createWorkout() throws Exception {
         var content = """
@@ -61,8 +72,8 @@ class WorkoutControllerTest {
             .perform(post("/workout")
                 .content(content)
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + jwtUtils.token(user)))
-            .andExpect(status().isOk())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtUtils.token(user)))
+            .andExpect(status().isCreated())
             .andExpect(jsonPath("$.id").exists())
             .andExpect(jsonPath("$.name").value("Daily workout"))
             .andExpect(jsonPath("$.exercises[0].exercise.name").value("Deadlift"))
@@ -72,7 +83,7 @@ class WorkoutControllerTest {
             .andExpect(jsonPath("$.exercises[1].exercise.name").value("Squat"))
             .andExpect(jsonPath("$.exercises[1].reps").value(4))
             .andExpect(jsonPath("$.exercises[1].sets").value(15));
-        Page<Workout> workouts = repository.findAllByUserId(user.getId(), Pageable.unpaged());
+        List<Workout> workouts = repository.findAll(WorkoutSpecifications.userId(user.getId()));
         assertThat(workouts).hasSize(2);
         assertThat(workouts)
             .extracting(Workout::getName)
@@ -85,8 +96,8 @@ class WorkoutControllerTest {
         var workoutId = UUID.fromString("7a591c1c-a2e0-4b87-9fee-e24e47a1b6d3");
         mockMvc
             .perform(delete("/workout/{id}", workoutId)
-                .header("Authorization", "Bearer " + jwtUtils.token(user)))
-            .andExpect(status().isOk());
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtUtils.token(user)))
+            .andExpect(status().isNoContent());
         assertThat(repository.existsById(workoutId)).isFalse();
     }
 
@@ -96,7 +107,7 @@ class WorkoutControllerTest {
         var workoutId = UUID.fromString("7a591c1c-a2e0-4b87-9fee-e24e47a1b6d3");
         mockMvc
             .perform(delete("/workout/{id}", workoutId)
-                .header("Authorization", "Bearer " + jwtUtils.token(user)))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtUtils.token(user)))
             .andExpect(status().isBadRequest());
         assertThat(repository.existsById(workoutId)).isTrue();
     }
@@ -125,7 +136,7 @@ class WorkoutControllerTest {
             .perform(put("/workout/{id}", workoutId)
                 .content(content)
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + jwtUtils.token(user)))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtUtils.token(user)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(workoutId.toString()))
             .andExpect(jsonPath("$.name").value("Advanced workout (new)"))
@@ -137,7 +148,7 @@ class WorkoutControllerTest {
             .andExpect(jsonPath("$.exercises[1].reps").value(4))
             .andExpect(jsonPath("$.exercises[1].sets").value(15))
             .andExpect(jsonPath("$.exercises[2]").doesNotExist());
-        Page<Workout> workouts = repository.findAllByUserId(user.getId(), Pageable.unpaged());
+        List<Workout> workouts = repository.findAll(WorkoutSpecifications.userId(user.getId()));
         assertThat(workouts).hasSize(1);
         assertThat(workouts)
             .extracting(Workout::getName)
@@ -168,7 +179,7 @@ class WorkoutControllerTest {
             .perform(put("/workout/{id}", workoutId)
                 .content(content)
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + jwtUtils.token(user)))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtUtils.token(user)))
             .andExpect(status().isBadRequest());
         List<Workout> workouts = repository.findAll();
         assertThat(workouts).hasSize(1);
@@ -185,9 +196,35 @@ class WorkoutControllerTest {
                 .queryParam("page", "0")
                 .queryParam("size", "10")
                 .queryParam("sort", "name,asc")
-                .header("Authorization", "Bearer " + jwtUtils.token(user)))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtUtils.token(user)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.content[0].name").value("Advanced workout"));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "2024-05-31,Europe/Brussels,0",
+        "2024-06-01,Europe/Brussels,1",
+        "2024-06-01,US/Hawaii,0",
+        "2024-06-02,Europe/Brussels,0",
+        "2024-06-03,Europe/Brussels,1",
+        "2024-06-04,Europe/Brussels,0",
+        "2024-06-05,Europe/Brussels,1",
+        "2024-06-06,Europe/Brussels,0"
+    })
+    void listWorkouts_onSpecificDate(String date, String zoneId, int expectedResults) throws Exception {
+        var user = testUsers.user1();
+        mockMvc
+            .perform(get("/workout")
+                .queryParam("date", date)
+                .queryParam("zoneId", zoneId)
+                .queryParam("page", "0")
+                .queryParam("size", "10")
+                .queryParam("sort", "name,asc")
+                .header(HttpHeaders.ACCEPT_LANGUAGE, "en-US")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtUtils.token(user)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.totalElements").value(expectedResults));
     }
 
     @Test
@@ -198,8 +235,23 @@ class WorkoutControllerTest {
                 .queryParam("page", "0")
                 .queryParam("size", "10")
                 .queryParam("sort", "name,asc")
-                .header("Authorization", "Bearer " + jwtUtils.token(user)))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtUtils.token(user)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.content[0]").doesNotExist());
+    }
+
+    @Test
+    void getWorkoutReport() throws Exception {
+        var user = testUsers.user1();
+        var workoutId = UUID.fromString("7a591c1c-a2e0-4b87-9fee-e24e47a1b6d3");
+        mockMvc
+            .perform(get("/workout/{id}/report", workoutId)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtUtils.token(user)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.totalTimesCompleted").value(2))
+            .andExpect(jsonPath("$.averageDuration").value("PT1H7M30S"))
+            .andExpect(jsonPath("$.shortestDuration").value("PT55M"))
+            .andExpect(jsonPath("$.longestDuration").value("PT1H20M"))
+            .andExpect(jsonPath("$.totalTimeSpent").value("PT2H15M"));
     }
 }

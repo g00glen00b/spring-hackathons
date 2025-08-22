@@ -4,5 +4,5 @@ create table workout_schedule (
     planned_start timestamp not null,
     actual_start timestamp null,
     actual_end timestamp null,
-    constraint fk_workout_schedule_workout foreign key (workout_id) references workout(id)
+    constraint fk_workout_schedule_workout foreign key (workout_id) references workout(id) on delete cascade
 );

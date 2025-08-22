@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -23,7 +25,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(properties = {
+    "jwt.secret=my-secret"
+})
 @Import({TestcontainersConfiguration.class, TestUsers.class})
 @AutoConfigureMockMvc
 @Sql(scripts = "classpath:test-data/users.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -39,6 +43,10 @@ class UserControllerTest {
     private JwtUtils jwtUtils;
     @Autowired
     private TestUsers testUsers;
+    @Autowired
+    private UserRepository repository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Test
     void getToken_returnsJwt() throws Exception {
@@ -53,7 +61,8 @@ class UserControllerTest {
         var token = objectMapper.readValue(response, TokenDTO.class);
         var decodedToken = jwtVerifier.verify(token.token());
         assertThat(decodedToken.getIssuer()).isEqualTo("workout-tracker");
-        assertThat(decodedToken.getSubject()).isEqualTo("user1");
+        assertThat(decodedToken.getSubject()).isEqualTo("90bcce34-b4b5-418e-8c81-f095e638073c");
+        assertThat(decodedToken.getClaim("username").asString()).isEqualTo("user1");
         assertThat(decodedToken.getExpiresAt()).isCloseTo(Instant.now().plus(1, ChronoUnit.HOURS), 5_000L);
     }
 
@@ -71,9 +80,43 @@ class UserControllerTest {
         User user1 = testUsers.user1();
         mockMvc
             .perform(get("/user/info")
-                .header("Authorization", "Bearer " + jwtUtils.token(user1)))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtUtils.token(user1)))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.sub").value("user1"))
+            .andExpect(jsonPath("$.sub").value("90bcce34-b4b5-418e-8c81-f095e638073c"))
+            .andExpect(jsonPath("$.username").value("user1"))
             .andExpect(jsonPath("$.iss").value("workout-tracker"));
+    }
+
+    @Test
+    void registerUser() throws Exception {
+        var content = """
+        {
+            "username": "newuser",
+            "password": "newpassword"
+        }
+        """;
+        mockMvc
+            .perform(post("/user")
+                .contentType("application/json")
+                .content(content))
+            .andExpect(status().isCreated());
+        User result = repository.findByUsername("newuser").orElseThrow();
+        assertThat(result.getUsername()).isEqualTo("newuser");
+        assertThat(passwordEncoder.matches("newpassword", result.getPassword())).isTrue();
+    }
+
+    @Test
+    void registerUser_failsIfUsernameAlreadyExists() throws Exception {
+        var content = """
+        {
+            "username": "user1",
+            "password": "newpassword"
+        }
+        """;
+        mockMvc
+            .perform(post("/user")
+                .contentType("application/json")
+                .content(content))
+            .andExpect(status().isBadRequest());
     }
 }

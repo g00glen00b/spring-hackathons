@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -21,7 +22,6 @@ import static java.util.function.Predicate.not;
 @Component
 @RequiredArgsConstructor
 class JwtFilter extends OncePerRequestFilter {
-    private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final Pattern BEARER_PATTERN = Pattern.compile("^Bearer (.+?)$");
     private static final int BEARER_TOKEN_GROUP = 1;
     private final JWTVerifier jwtVerifier;
@@ -41,7 +41,7 @@ class JwtFilter extends OncePerRequestFilter {
 
     private Optional<String> getToken(HttpServletRequest request) {
         return Optional
-            .ofNullable(request.getHeader(AUTHORIZATION_HEADER))
+            .ofNullable(request.getHeader(HttpHeaders.AUTHORIZATION))
             .filter(not(String::isEmpty))
             .map(BEARER_PATTERN::matcher)
             .filter(Matcher::find)

@@ -1,0 +1,1 @@
+delete from workout_schedule;
