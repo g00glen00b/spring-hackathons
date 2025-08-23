@@ -33,9 +33,13 @@ public class UpdateWorkout {
     private void updateExercises(Workout workout, Parameters parameters) {
         Map<UUID, WorkoutExercise> existingExercises = workout.getExercisesAsMap();
         parameters.exercises().forEach(exercise -> {
-            if (existingExercises.containsKey(exercise.id())) {
-                updateExercise(exercise, existingExercises.get(exercise.id()));
-                existingExercises.remove(exercise.id());
+            if (exercise.id() != null) {
+                if (existingExercises.containsKey(exercise.id())) {
+                    updateExercise(exercise, existingExercises.get(exercise.id()));
+                    existingExercises.remove(exercise.id());
+                } else {
+                    throw new IllegalArgumentException("Exercise not found");
+                }
             } else {
                 addExerciseToWorkout(workout, exercise);
             }

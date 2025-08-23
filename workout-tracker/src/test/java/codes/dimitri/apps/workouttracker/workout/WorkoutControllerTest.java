@@ -118,7 +118,7 @@ class WorkoutControllerTest {
         {
             "name": "Advanced workout (new)",
             "exercises": [{
-                "id": "7a591c1c-a2e0-4b87-9fee-e24e47a1b6d3",
+                "id": "d40aa781-5b4c-4e6c-81a5-1e909664a5da",
                 "exerciseId": "1b8ccc44-312f-4fdd-8a87-4b8c0a3d8b1c",
                 "reps": 7,
                 "sets": 5,
@@ -156,6 +156,35 @@ class WorkoutControllerTest {
     }
 
     @Test
+    void updateWorkout_doesNothingIfWrongIdPassed() throws Exception {
+        var content = """
+        {
+            "name": "Advanced workout (new)",
+            "exercises": [{
+                "id": "00000000-0000-0000-0000-000000000000",
+                "exerciseId": "1b8ccc44-312f-4fdd-8a87-4b8c0a3d8b1c",
+                "reps": 7,
+                "sets": 5,
+                "weightInKg": 160
+            }]
+        }
+        """;
+        var user = testUsers.user1();
+        var workoutId = UUID.fromString("7a591c1c-a2e0-4b87-9fee-e24e47a1b6d3");
+        mockMvc
+            .perform(put("/workout/{id}", workoutId)
+                .content(content)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtUtils.token(user)))
+            .andExpect(status().isBadRequest());
+        List<Workout> workouts = repository.findAll(WorkoutSpecifications.userId(user.getId()));
+        assertThat(workouts).hasSize(1);
+        assertThat(workouts)
+            .extracting(Workout::getName)
+            .containsOnly("Advanced workout");
+    }
+
+    @Test
     void updateWorkout_doesNothingIfWrongUserOrId() throws Exception {
         var content = """
         {
@@ -182,10 +211,10 @@ class WorkoutControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtUtils.token(user)))
             .andExpect(status().isBadRequest());
         List<Workout> workouts = repository.findAll();
-        assertThat(workouts).hasSize(1);
+        assertThat(workouts).hasSize(2);
         assertThat(workouts)
             .extracting(Workout::getName)
-            .containsOnly("Advanced workout");
+            .containsOnly("Advanced workout", "Basic workout");
     }
 
     @Test
@@ -253,5 +282,30 @@ class WorkoutControllerTest {
             .andExpect(jsonPath("$.shortestDuration").value("PT55M"))
             .andExpect(jsonPath("$.longestDuration").value("PT1H20M"))
             .andExpect(jsonPath("$.totalTimeSpent").value("PT2H15M"));
+    }
+
+    @Test
+    void getWorkoutReport_doesNothingIfNotFound() throws Exception {
+        var user = testUsers.user2();
+        var workoutId = UUID.fromString("7a591c1c-a2e0-4b87-9fee-e24e47a1b6d3");
+        mockMvc
+            .perform(get("/workout/{id}/report", workoutId)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtUtils.token(user)))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void getWorkoutReport_unscheduledWorkout() throws Exception {
+        var user = testUsers.user3();
+        var workoutId = UUID.fromString("a70c5266-ade3-4ac7-8e79-4c734aacfab1");
+        mockMvc
+            .perform(get("/workout/{id}/report", workoutId)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtUtils.token(user)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.totalTimesCompleted").value(0))
+            .andExpect(jsonPath("$.averageDuration").value("PT0S"))
+            .andExpect(jsonPath("$.shortestDuration").value("PT0S"))
+            .andExpect(jsonPath("$.longestDuration").value("PT0S"))
+            .andExpect(jsonPath("$.totalTimeSpent").value("PT0S"));
     }
 }

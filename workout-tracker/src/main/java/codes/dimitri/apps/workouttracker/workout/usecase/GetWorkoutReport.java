@@ -27,11 +27,15 @@ public class GetWorkoutReport {
         Duration totalTimeSpent = fromSeconds(scheduleRepository.totalActualDurationByWorkoutId(workoutId));
         return new WorkoutReport(
             totalTimesCompleted,
-            totalTimeSpent.dividedBy(totalTimesCompleted),
+            averageDuration(totalTimesCompleted, totalTimeSpent),
             fromSeconds(scheduleRepository.minActualDurationByWorkoutId(workoutId)),
             fromSeconds(scheduleRepository.maxActualDurationByWorkoutId(workoutId)),
             totalTimeSpent
         );
+    }
+
+    private static Duration averageDuration(int totalTimesCompleted, Duration totalTimeSpent) {
+        return totalTimesCompleted == 0 ? Duration.ZERO : totalTimeSpent.dividedBy(totalTimesCompleted);
     }
 
     private static Duration fromSeconds(Long seconds) {
