@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<table class="table">
+  <thead>
+  <tr>
+    <th scope="col">#</th>
+    <th scope="col">User</th>
+    <th scope="col">Submitted on</th>
+    <th class="text-right" scope="col">Score</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="score, status : ${scores}" th:class="${score.currentUser ? 'table-warning' : ''}">
+    <td th:text="${scores.pageable.getOffset() + status.index + 1}">0</td>
+    <td th:text="${score.username}">Username</td>
+    <td th:text="${#temporals.format(score.lastModifiedAt, 'yyyy-MM-dd')}">1970-01-01 00:00:00</td>
+    <td class="text-right" th:text="${score.score}">0</td>
+  </tr>
+  <tr th:if="${scores.totalElements == 0}">
+    <td>n/a</td>
+    <td>n/a</td>
+    <td>n/a</td>
+    <td class="text-right">n/a</td>
+  </tr>
+  </tbody>
+</table>
+<nav th:replace="~{fragments/pagination :: pagination (paginationLink=${paginationLink}, pages=${pages}, page=${scores.pageable.pageNumber}, size=${scores.pageable.pageSize})}">
+</nav>
+</body>
+</html>

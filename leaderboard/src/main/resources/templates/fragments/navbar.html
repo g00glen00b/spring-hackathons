@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<div
+  th:fragment="navbar (historyPicker, location)"
+  class="d-flex flex-row mt-3 mb-3">
+  <div class="flex-grow-1">
+    <a
+      class="btn btn-outline-primary"
+      href="/game">
+      All games
+    </a>
+  </div>
+  <form
+    method="get"
+    class="d-flex"
+    th:if="${historyPicker}"
+    th:action="${location}">
+    <label class="visually-hidden" for="lastModifiedBefore">Last modified before</label>
+    <div>
+      <input
+        type="date"
+        class="form-control"
+        th:value="${#temporals.format(lastModifiedBefore, 'yyyy-MM-dd')}"
+        name="lastModifiedBefore"
+        id="lastModifiedBefore"
+        th:max="${#temporals.format(today, 'yyyy-MM-dd')}"/>
+    </div>
+    <button type="submit" class="btn btn-outline-secondary ms-3">View history</button>
+  </form>
+  <form
+    method="post"
+    class="d-flex ms-5"
+    th:fragment="logout"
+    th:action="@{/logout}">
+    <button
+      type="submit"
+      class="btn btn-outline-primary">
+      Log out
+    </button>
+  </form>
+</div>
+</body>
+</html>

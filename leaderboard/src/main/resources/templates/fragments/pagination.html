@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<nav
+  th:fragment="pagination (paginationLink, pages, page, size)"
+  th:if="${paginationLink != null}"
+  class="d-flex flex-row justify-content-center">
+  <ul class="pagination">
+    <li
+      th:each="pageLink : ${pages}"
+      th:class="|page-item ${pageLink.page == null ? 'disabled' : ''}|">
+      <a
+        th:if="${pageLink.page != null}"
+        th:class="|page-link ${pageLink.page == page && !pageLink.special ? 'active' : ''}|"
+        th:href="|${paginationLink}?page=${pageLink.page}&size=${size}|"
+        th:text="${pageLink.text}">
+      </a>
+      <a
+        th:if="${pageLink.page == null}"
+        class="page-link"
+        th:text="${pageLink.text}">
+      </a>
+    </li>
+  </ul>
+</nav>
+</body>
+</html>

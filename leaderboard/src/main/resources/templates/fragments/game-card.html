@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<div class="card h-100" th:fragment="game-card (gameId, gameName, lastModifiedBefore)">
+  <div class="card-header" th:text="${gameName}">Game</div>
+  <div
+    class="card-body"
+    th:hx-get="|/game/${gameId}/score?size=5&lastModifiedBefore=${lastModifiedBefore}|"
+    hx-trigger="load, every 5s">
+  </div>
+  <div class="card-footer">
+    <a th:href="|/game/${gameId}|" class="card-link">View Leaderboard</a>
+    <a th:href="|/game/${gameId}/score/submit|" class="card-link">Add Score</a>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments/head :: head}"></head>
+<body>
+<div class="container">
+  <div class="row justify-content-md-center">
+    <div class="card col-lg-6 mt-4">
+      <div class="card-body">
+        <h5 class="card-title">Register</h5>
+        <form th:action="@{/register}" method="post" th:object="${request}">
+          <div
+            class="alert alert-danger"
+            th:if="${error != null}"
+            role="alert"
+            th:text="${error}">
+          </div>
+          <div class="alert alert-success" th:if="${success}" role="alert">
+            You are now able to log in.
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="username">Username</label>
+            <input
+              type="text"
+              class="form-control"
+              name="username"
+              th:field="*{username}"
+              id="username" />
+          </div>
+          <div class="form-group mb-3">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              class="form-control"
+              name="password"
+              th:field="*{password}"
+              id="password" />
+          </div>
+          <div class="form-group mb-3">
+            <label for="password">Repeat password</label>
+            <input
+              type="password"
+              class="form-control"
+              name="repeatPassword"
+              th:field="*{repeatPassword}"
+              id="repeatPassword" />
+          </div>
+          <button type="submit" class="btn btn-primary">Sign up</button>
+          <a href="/login" role="button" class="btn btn-outline-secondary">Log in</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div th:replace="~{fragments/foot :: foot}"></div>
+</body>
+</html>

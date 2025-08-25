@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments/head :: head}"></head>
+<body>
+<div class="container">
+  <div th:replace="~{fragments/navbar :: navbar(historyPicker=false, location=null)}"></div>
+  <div class="row justify-content-md-center">
+    <div class="card col-lg-6 mt-4">
+      <div class="card-body">
+        <h5 class="card-title" th:text="|Submit score for ${game.name}|">Submit score for game</h5>
+        <form th:action="@{/game/{id}/score/submit(id=${game.id})}" method="post">
+          <div class="form-group mb-3">
+            <label for="score">Score</label>
+            <input
+              th:value="${score}"
+              type="number"
+              class="form-control"
+              name="score"
+              id="score" />
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+          <a href="/game" role="button" class="btn btn-outline-secondary">Cancel</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
