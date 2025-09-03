@@ -5,7 +5,7 @@
   th:fragment="message(message, loadPrevious)"
   th:id="${message.id}"
   th:class="|alert ${message.isCurrentUser ? 'alert-dark' : 'alert-light'}|"
-  th:hx-trigger="${loadPrevious == null ? '' : 'intersect'}"
+  th:hx-trigger="${loadPrevious == null ? '' : 'intersect once'}"
   th:hx-swap="${loadPrevious == null ? '' : 'afterend scroll:bottom'}"
   th:hx-get="${loadPrevious}">
   <div class="d-flex">
@@ -18,7 +18,14 @@
       <h6 th:text="${'@' + message.username}">g00glen00b</h6>
       <span th:text="${message.message}">Message</span>
     </div>
-    <small>3</small>
+    <small
+      th:id="|${message.id}-viewcount|"
+      th:text="${message.viewCount}"
+      th:hx-trigger="${message.seen ? '' : 'intersect once, delay:1s'}"
+      th:hx-post="${message.seen ? '' : ('/message/' + message.id + '/read')}"
+      hx-swap="none">
+      0
+    </small>
   </div>
 </div>
 </body>

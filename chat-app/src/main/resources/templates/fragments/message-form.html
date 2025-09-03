@@ -2,7 +2,7 @@
 <html lang="en">
 <body>
 <form
-  th:fragment="message-form (roomId)"
+  th:fragment="message-form (roomId, username)"
   class="d-flex border-top p-2"
   ws-send
   hx-trigger="submit"
@@ -12,14 +12,21 @@
     name="roomId"
     th:value="${roomId}" />
   <label class="visually-hidden" for="message">Message</label>
-  <input
-    type="text"
-    class="form-control"
-    name="message"
-    id="message"
-    ws-send
-    hx-trigger="keyup"
-    placeholder="Type your message here..." />
+  <div class="input-group">
+    <div
+      class="input-group-text"
+      th:text="'@' + ${username}">
+      @username
+    </div>
+    <input
+      type="text"
+      class="form-control"
+      name="message"
+      id="message"
+      ws-send
+      hx-trigger="keyup"
+      placeholder="Type your message here..." />
+  </div>
   <button type="submit" class="btn btn-primary ms-2">Send</button>
 </form>
 </body>

@@ -6,14 +6,16 @@ import codes.dimitri.apps.chat.shared.SecurityUser;
 import java.time.Instant;
 import java.util.UUID;
 
-public record MessageInfoResponse(UUID id, String message, Instant createdAt, String username, boolean isCurrentUser) {
+public record MessageInfoResponse(UUID id, String message, Instant createdAt, String username, boolean isCurrentUser, boolean seen, int viewCount) {
     public static MessageInfoResponse from(Message message, SecurityUser currentUser) {
         return new MessageInfoResponse(
             message.getId(),
             message.getMessage(),
             message.getCreatedAt(),
             message.getUser().getUsername(),
-            currentUser.isSameUser(message.getUser())
+            currentUser.isSameUser(message.getUser()),
+            message.getReadUsers().stream().anyMatch(currentUser::isSameUser),
+            message.getReadUsers().size()
         );
     }
 }

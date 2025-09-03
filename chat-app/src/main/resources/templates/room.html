@@ -23,7 +23,7 @@
           hx-swap="outerHTML scroll:bottom">
         </div>
       </div>
-      <form th:replace="~{fragments/message-form :: message-form(roomId=${room.id})}">
+      <form th:replace="~{fragments/message-form :: message-form(${room.id}, ${username})}">
       </form>
     </div>
   </div>

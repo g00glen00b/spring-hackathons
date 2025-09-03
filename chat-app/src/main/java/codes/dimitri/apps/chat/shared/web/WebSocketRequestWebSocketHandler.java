@@ -40,6 +40,7 @@ public class WebSocketRequestWebSocketHandler implements WebSocketHandler {
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
         WebSocketRequest request = mapRequestFromMessage(message).orElseThrow();
         SecurityUser user = inMemoryWebSocketTemplate.getUserFromSession(session).orElseThrow();
+        log.info("Handling message {} for user {}", request, user.getUsername());
         handlers.forEach(handler -> handler.onMessage(request, new SecuredRoomWebSocketSession(
             new SecuredWebSocketSession(session, user),
             request.roomId()

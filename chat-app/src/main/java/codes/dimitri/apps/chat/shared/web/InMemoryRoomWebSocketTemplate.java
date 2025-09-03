@@ -1,6 +1,7 @@
 package codes.dimitri.apps.chat.shared.web;
 
 import codes.dimitri.apps.chat.shared.SecurityUser;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketMessage;
@@ -11,6 +12,7 @@ import java.net.URI;
 import java.util.*;
 import java.util.function.Function;
 
+@Slf4j
 @Component
 public class InMemoryRoomWebSocketTemplate implements RoomWebSocketTemplate {
     private final Map<UUID, List<SecuredWebSocketSession>> sessions = new HashMap<>();
@@ -29,8 +31,9 @@ public class InMemoryRoomWebSocketTemplate implements RoomWebSocketTemplate {
     }
 
     private void sendSafely(SecuredWebSocketSession securedWebSocketSession, Function<SecuredWebSocketSession, WebSocketMessage<?>> mapper) {
-        try (WebSocketSession session = securedWebSocketSession.session()) {
-            session.sendMessage(mapper.apply(securedWebSocketSession));
+        try {
+            WebSocketMessage<?> message = mapper.apply(securedWebSocketSession);
+            securedWebSocketSession.session().sendMessage(message);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -53,6 +56,7 @@ public class InMemoryRoomWebSocketTemplate implements RoomWebSocketTemplate {
             .filter(current -> session.equals(current.session()))
             .findAny()
             .orElseThrow();
+        sessions.remove(securedSession);
         return new SecuredRoomWebSocketSession(securedSession, roomId);
     }
 

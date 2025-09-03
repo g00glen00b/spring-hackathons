@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -34,5 +35,9 @@ public class Message {
     public void addReadUser(User user) {
         MessageReadUser readUser = new MessageReadUser(new MessageReadUserId(id, user.getId()), this, user);
         readUsers.add(readUser);
+    }
+
+    public List<User> getReadUsers() {
+        return readUsers.stream().map(MessageReadUser::getUser).toList();
     }
 }

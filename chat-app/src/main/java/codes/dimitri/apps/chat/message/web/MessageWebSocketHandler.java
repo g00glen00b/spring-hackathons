@@ -8,6 +8,7 @@ import codes.dimitri.apps.chat.shared.web.SecuredRoomWebSocketSession;
 import codes.dimitri.apps.chat.shared.web.WebSocketRequest;
 import codes.dimitri.apps.chat.shared.web.WebSocketRequestHandler;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.thymeleaf.TemplateEngine;
@@ -15,6 +16,7 @@ import org.thymeleaf.context.Context;
 
 import java.util.Set;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class MessageWebSocketHandler implements WebSocketRequestHandler {
@@ -29,6 +31,7 @@ public class MessageWebSocketHandler implements WebSocketRequestHandler {
             Message message = addMessageToRoom.execute(parameters);
             roomWebSocketTemplate.sendToRoom(session.roomId(), receiverSession -> {
                 String payload = renderMessage(message, receiverSession.user());
+                log.info("Sending {} to {}", message.getMessage(), receiverSession.user().username());
                 return new TextMessage(payload);
             });
         }

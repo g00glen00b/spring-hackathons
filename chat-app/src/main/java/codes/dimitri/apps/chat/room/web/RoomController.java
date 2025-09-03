@@ -3,7 +3,9 @@ package codes.dimitri.apps.chat.room.web;
 import codes.dimitri.apps.chat.room.Room;
 import codes.dimitri.apps.chat.room.usecase.GetRoomInfo;
 import codes.dimitri.apps.chat.room.usecase.ListRooms;
+import codes.dimitri.apps.chat.shared.SecurityUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,9 +30,10 @@ public class RoomController {
     }
 
     @GetMapping("/{id}")
-    public String showRoom(@PathVariable UUID id, Model model) {
+    public String showRoom(@PathVariable UUID id, @AuthenticationPrincipal SecurityUser currentUser, Model model) {
         Room room = getRoomInfo.execute(new GetRoomInfo.Parameters(id));
         model.addAttribute("room", room);
+        model.addAttribute("username", currentUser.getUsername());
         return "room";
     }
 
