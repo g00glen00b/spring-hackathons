@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<form
+  th:fragment="message-form (roomId)"
+  class="d-flex border-top p-2"
+  ws-send
+  hx-on::ws-after-send="this.reset()">
+  <input
+    type="hidden"
+    name="roomId"
+    th:value="${roomId}" />
+  <label class="visually-hidden" for="message">Message</label>
+  <input
+    type="text"
+    class="form-control"
+    name="message"
+    id="message"
+    placeholder="Type your message here..." />
+  <button type="submit" class="btn btn-primary ms-2">Send</button>
+</form>
+</body>
+</html>

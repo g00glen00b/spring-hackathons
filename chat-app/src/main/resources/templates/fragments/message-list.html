@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<th:block th:each="message, status : ${messages}">
+  <th:block th:if="${status.last}">
+    <div th:replace="~{fragments/message :: message(${message}, '/message/fragment/list?roomId=' + ${roomId} + '&before=' + ${message.createdAt})}">
+    </div>
+  </th:block>
+  <th:block th:if="${!status.last}">
+    <div th:replace="~{fragments/message :: message(${message}, null)}">
+    </div>
+  </th:block>
+</th:block>
+</body>
+</html>

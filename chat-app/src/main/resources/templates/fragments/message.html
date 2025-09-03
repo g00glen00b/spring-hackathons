@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<div
+  th:fragment="message(message, loadPrevious)"
+  th:class="|alert ${message.isCurrentUser ? 'alert-dark' : 'alert-light'}|"
+  th:hx-trigger="${loadPrevious == null ? '' : 'intersect'}"
+  th:hx-swap="${loadPrevious == null ? '' : 'afterend scroll:bottom'}"
+  th:hx-get="${loadPrevious}">
+  <div class="d-flex">
+    <time
+      class="pe-2"
+      th:text="${#temporals.format(message.createdAt, 'HH:mm')}">10:00</time>
+    <div class="flex-fill">
+      <h6 th:text="${'@' + message.username}">g00glen00b</h6>
+      <span th:text="${message.message}">Message</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>

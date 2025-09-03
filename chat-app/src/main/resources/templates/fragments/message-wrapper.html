@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<div
+  id="messages"
+  class="d-flex flex-column-reverse flex-fill p-2 overflow-scroll"
+  hx-swap-oob="afterbegin"
+  th:fragment="message-wrapper (message)">
+  <div th:replace="~{fragments/message :: message(${message}, null)}">
+  </div>
+</div>
+</body>
+</html>

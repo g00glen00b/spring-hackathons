@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<div class="p-2 overflow-scroll border-end">
+  <div class="list-group list-group-flush">
+    <a
+      th:each="room : ${rooms}"
+      th:class="|list-group-item list-group-item-action ${room.active ? 'active' : ''}|"
+      th:text="'#' + ${room.name}"
+      th:href="|/room/${room.id}|">
+      #general
+    </a>
+  </div>
+</div>
+</body>
+</html>

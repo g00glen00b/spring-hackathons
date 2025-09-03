@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<div
+  class="p-2 overflow-scroll border-start"
+  hx-get="/user/fragment/list"
+  hx-trigger="every 5s"
+  hx-swap="outerHTML">
+  <ul class="list-group list-group-flush">
+    <li
+      class="list-group-item d-flex justify-content-between align-items-center"
+      th:each="user : ${users}">
+      <span class="me-2" th:text="'@' + ${user.username}">@g00glen00b</span>
+      <span
+        th:if="${user.online}"
+        class="badge text-bg-success rounded-pill">
+        Online
+      </span>
+      <span
+        th:if="${!user.online}"
+        class="badge text-bg-danger rounded-pill">
+        Offline
+      </span>
+    </li>
+  </ul>
+</div>
+</body>
+</html>
