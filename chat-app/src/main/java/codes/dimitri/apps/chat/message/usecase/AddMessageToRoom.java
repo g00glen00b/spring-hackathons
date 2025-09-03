@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @UseCase
 @RequiredArgsConstructor
-public class SendMessageToRoom {
+public class AddMessageToRoom {
     private final MessageRepository repository;
     private final UserRepository userRepository;
 
@@ -28,6 +28,8 @@ public class SendMessageToRoom {
 
     public Message execute(Parameters parameters) {
         User user = userRepository.findById(parameters.userId).orElseThrow();
-        return repository.save(new Message(user, parameters.roomId, parameters.message));
+        Message message = repository.save(new Message(user, parameters.roomId, parameters.message));
+        message.addReadUser(user);
+        return message;
     }
 }

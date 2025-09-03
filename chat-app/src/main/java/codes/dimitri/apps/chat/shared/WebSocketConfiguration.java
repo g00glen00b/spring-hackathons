@@ -1,6 +1,6 @@
 package codes.dimitri.apps.chat.shared;
 
-import codes.dimitri.apps.chat.message.web.MessageWebSocketHandler;
+import codes.dimitri.apps.chat.shared.web.WebSocketRequestWebSocketHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
@@ -11,10 +11,10 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @EnableWebSocket
 @RequiredArgsConstructor
 class WebSocketConfiguration implements WebSocketConfigurer {
-    private final MessageWebSocketHandler messageWebSocketHandler;
+    private final WebSocketRequestWebSocketHandler webSocketRequestWebSocketHandler;
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(messageWebSocketHandler, "/ws/room/**");
+        registry.addHandler(webSocketRequestWebSocketHandler, "/ws/room/**");
     }
 }

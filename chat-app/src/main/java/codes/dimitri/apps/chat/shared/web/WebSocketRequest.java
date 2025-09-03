@@ -1,13 +1,13 @@
-package codes.dimitri.apps.chat.message.web;
+package codes.dimitri.apps.chat.shared.web;
 
-import codes.dimitri.apps.chat.message.usecase.SendMessageToRoom;
+import codes.dimitri.apps.chat.message.usecase.AddMessageToRoom;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.UUID;
 
 public record WebSocketRequest(UUID roomId, String message, @JsonProperty("HEADERS") Headers headers) {
-    public SendMessageToRoom.Parameters toParameters(UUID userId) {
-        return new SendMessageToRoom.Parameters(
+    public AddMessageToRoom.Parameters toParameters(UUID userId) {
+        return new AddMessageToRoom.Parameters(
             roomId,
             userId,message
         );

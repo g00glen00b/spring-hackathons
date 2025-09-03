@@ -12,8 +12,10 @@ import java.util.UUID;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "\"user\"")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User {
     @Id
+    @EqualsAndHashCode.Include
     private UUID id;
     private String username;
     private String password;

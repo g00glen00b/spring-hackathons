@@ -3,6 +3,7 @@
 <body>
 <div
   th:fragment="message(message, loadPrevious)"
+  th:id="${message.id}"
   th:class="|alert ${message.isCurrentUser ? 'alert-dark' : 'alert-light'}|"
   th:hx-trigger="${loadPrevious == null ? '' : 'intersect'}"
   th:hx-swap="${loadPrevious == null ? '' : 'afterend scroll:bottom'}"
@@ -10,11 +11,14 @@
   <div class="d-flex">
     <time
       class="pe-2"
+      th:datetime="${#temporals.format(message.createdAt, 'yyyy-MM-dd HH:mm')}"
+      th:title="${#temporals.format(message.createdAt, 'yyyy-MM-dd HH:mm')}"
       th:text="${#temporals.format(message.createdAt, 'HH:mm')}">10:00</time>
     <div class="flex-fill">
       <h6 th:text="${'@' + message.username}">g00glen00b</h6>
       <span th:text="${message.message}">Message</span>
     </div>
+    <small>3</small>
   </div>
 </div>
 </body>
