@@ -1,0 +1,1 @@
+alter table "user" add column typing bool not null default false;

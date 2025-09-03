@@ -19,8 +19,10 @@ public class User {
     private String password;
     @Setter
     private boolean online;
+    @Setter
+    private boolean typing;
 
     public User(String username, String password) {
-        this(UUID.randomUUID(), username, password, false);
+        this(UUID.randomUUID(), username, password, false, false);
     }
 }

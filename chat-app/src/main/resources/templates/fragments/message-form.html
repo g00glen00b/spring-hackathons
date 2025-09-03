@@ -5,7 +5,8 @@
   th:fragment="message-form (roomId)"
   class="d-flex border-top p-2"
   ws-send
-  hx-on::ws-after-send="this.reset()">
+  hx-trigger="submit"
+  hx-on:htmx:ws-after-send="event.detail.elt === this && this.reset()">
   <input
     type="hidden"
     name="roomId"
@@ -16,6 +17,8 @@
     class="form-control"
     name="message"
     id="message"
+    ws-send
+    hx-trigger="keydown"
     placeholder="Type your message here..." />
   <button type="submit" class="btn btn-primary ms-2">Send</button>
 </form>
