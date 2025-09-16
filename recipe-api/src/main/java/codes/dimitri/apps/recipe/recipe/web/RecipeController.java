@@ -1,5 +1,6 @@
 package codes.dimitri.apps.recipe.recipe.web;
 
+import codes.dimitri.apps.recipe.recipe.MediaTypeResourceTuple;
 import codes.dimitri.apps.recipe.recipe.Recipe;
 import codes.dimitri.apps.recipe.recipe.usecase.CreateRecipe;
 import codes.dimitri.apps.recipe.recipe.usecase.GetRecipeImage;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,8 +44,12 @@ public class RecipeController {
     }
 
     @GetMapping("/image/{imageId}")
-    public Resource getImage(@PathVariable UUID imageId) {
+    public ResponseEntity<Resource> getImage(@PathVariable UUID imageId) {
         var parameters = new GetRecipeImage.Parameters(imageId);
-        return getRecipeImage.execute(parameters);
+        MediaTypeResourceTuple result = getRecipeImage.execute(parameters);
+        return ResponseEntity
+            .ok()
+            .contentType(result.mediaType())
+            .body(result.resource());
     }
 }
