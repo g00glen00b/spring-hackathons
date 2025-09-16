@@ -1,0 +1,61 @@
+@username = g00glen00b
+@password = my-not-so-secret-password
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOm51bGwsInN1YiI6IjhhOWY5MTliLTk5ZTItNGYyMS05NWQ3LTE0ODBiMGJhYWY0OCIsImV4cCI6MTc1ODA1ODQ1MywidW5tIjoiZzAwZ2xlbjAwYiIsImRubSI6IkRpbWl0cmkiLCJpYXQiOjE3NTgwNTQ4NTN9.50eX1jTzaIAUnXeB-tc6Ru6l6BkEDG4CmZlBz7SHiic
+@imageId = f6d32951-3ae5-4ee4-8923-aeaef7e3aa95
+@page = 1
+@pagesize = 10
+
+GET http://localhost:8080/api/recipe?page={{page}}&size={{pagesize}}&sort=title,asc
+
+###
+
+POST http://localhost:8080/api/chef
+Content-Type: application/json
+
+{
+  "username": "{{username}}",
+  "displayname": "Dimitri",
+  "password": "{{password}}"
+}
+
+###
+
+GET http://localhost:8080/api/chef/token
+Authorization: Basic {{username}} {{password}}
+
+###
+
+GET http://localhost:8080/api/chef
+Authorization: Bearer {{token}}
+
+###
+
+POST http://localhost:8080/api/recipe
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="request"
+Content-Type: application/json
+
+{
+  "title": "S'mores",
+  "description": "Heat marshmallow over an open flame until golden brown. Sandwich between two graham crackers with a piece of chocolate."
+}
+
+--boundary
+Content-Disposition: form-data; name="image"; filename="image1.jpg"
+Content-Type: image/jpeg
+
+< test-data/image1.jpg
+
+--boundary
+Content-Disposition: form-data; name="image"; filename="image2.jpg"
+Content-Type: image/jpeg
+
+< test-data/image2.jpg
+--boundary--
+
+###
+
+GET http://localhost:8080/api/recipe/image/{{imageId}}
